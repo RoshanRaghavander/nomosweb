@@ -13,6 +13,7 @@ export interface NomosProfile {
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim()
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim()
+const siteUrlOverride = import.meta.env.VITE_SITE_URL?.trim()
 
 export const hasSupabaseEnv = Boolean(supabaseUrl && supabasePublishableKey)
 
@@ -62,7 +63,19 @@ export async function fetchNomosProfile(session: Session): Promise<NomosProfile>
   }
 }
 
-export async function sendMagicLink(email: string, redirectPath = '/dashboard') {
+function normalizeOrigin(value: string): string {
+  return value.replace(/\/+$/, '')
+}
+
+export function getAppOrigin() {
+  if (siteUrlOverride) {
+    return normalizeOrigin(siteUrlOverride)
+  }
+
+  return normalizeOrigin(window.location.origin)
+}
+
+export async function sendMagicLink(email: string, redirectPath = '/auth/callback') {
   if (!supabase) {
     throw new Error('Supabase environment variables are missing.')
   }
@@ -71,7 +84,7 @@ export async function sendMagicLink(email: string, redirectPath = '/dashboard') 
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: `${window.location.origin}${redirectPath}`,
+      emailRedirectTo: `${getAppOrigin()}${redirectPath}`,
     },
   })
 }
@@ -85,7 +98,7 @@ export async function signOutUser() {
 }
 
 export function getCheckoutRedirects() {
-  const origin = window.location.origin
+  const origin = getAppOrigin()
 
   return {
     successUrl: `${origin}/billing?checkout=success`,

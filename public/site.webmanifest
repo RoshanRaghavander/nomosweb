@@ -1,8 +1,9 @@
 {
   "name": "Nomos",
   "short_name": "Nomos",
-  "description": "The AI agentic IDE for teams building software end to end.",
+  "description": "Nomos is the AI agentic IDE at nomos.wtf for teams building software end to end.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",

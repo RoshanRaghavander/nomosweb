@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react'
 import { ArrowRight, MailCheck } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 import { sendMagicLink } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -64,6 +65,14 @@ export default function AuthPanel() {
           <p className="mt-2">
             Plan: <span className="text-[#111114]">{profile?.plan === 'pro' ? 'Pro' : 'Free'}</span>
           </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link className="nomos-home__pill" to="/dashboard">
+              Open dashboard
+            </Link>
+            <Link className="nomos-home__pill nomos-home__pill--ghost" to="/billing">
+              Open billing
+            </Link>
+          </div>
         </div>
       ) : (
         <form className="nomos-public-form" onSubmit={handleSubmit}>
