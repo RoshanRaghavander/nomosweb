@@ -1,0 +1,804 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+.nomos-home {
+  --ink: #111114;
+  --ink-soft: #3c3c43;
+  --grey: #8a8a92;
+  --line: #e7e7ea;
+  --bg: #ffffff;
+  --pill-black: #0e0e11;
+  --lime: #c5e86c;
+  --mint: #9fd8a3;
+  --sky: #cfe9f5;
+  --sun: #f4e96b;
+  --radius-card: 26px;
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+.nomos-home *,
+.nomos-home *::before,
+.nomos-home *::after {
+  box-sizing: border-box;
+}
+
+.nomos-home a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nomos-home__wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.nomos-home nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+}
+
+.nomos-home__logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+.nomos-home__nav-center,
+.nomos-home__nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nomos-home__nav-center {
+  gap: 30px;
+}
+
+.nomos-home__nav-center a,
+.nomos-home__nav-right .plain {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nomos-home__nav-center a:hover,
+.nomos-home__nav-right .plain:hover {
+  color: var(--grey);
+}
+
+.nomos-home__nav-right {
+  gap: 22px;
+}
+
+.nomos-home__caret {
+  font-size: 9px;
+  color: var(--grey);
+}
+
+.nomos-home a.nomos-home__pill,
+.nomos-home button.nomos-home__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--pill-black);
+  background: var(--pill-black);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.nomos-home a.nomos-home__pill:hover,
+.nomos-home button.nomos-home__pill:hover {
+  background: #26262b;
+  transform: translateY(-1px);
+}
+
+.nomos-home a.nomos-home__pill--ghost {
+  background: #fff;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.nomos-home a.nomos-home__pill--ghost:hover {
+  background: #f6f6f7;
+}
+
+.nomos-home header {
+  padding: 64px 0 26px;
+  text-align: center;
+}
+
+.nomos-home h1,
+.nomos-home h2,
+.nomos-home h3 {
+  margin: 0;
+}
+
+.nomos-home__headline {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(44px, 6.4vw, 72px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.nomos-home__sub {
+  margin-top: 26px;
+  font-size: 17px;
+  color: var(--ink-soft);
+  font-weight: 400;
+}
+
+.nomos-home__cta-row {
+  margin-top: 34px;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nomos-home__cta-row .nomos-home__pill {
+  padding: 14px 26px;
+}
+
+.nomos-home__dash {
+  opacity: 0.55;
+  font-weight: 400;
+}
+
+.nomos-home__stage {
+  margin: 56px auto 0;
+  position: relative;
+  overflow: hidden;
+  height: clamp(320px, 44vw, 470px);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(120% 130% at 8% 8%, #eef6b8 0%, transparent 55%),
+    radial-gradient(95% 120% at 92% 6%, var(--sky) 0%, transparent 52%),
+    radial-gradient(110% 140% at 50% 110%, #4d7a4f 0%, #7fae72 34%, transparent 72%),
+    linear-gradient(120deg, var(--lime) 0%, var(--mint) 48%, #dff0e2 100%);
+}
+
+.nomos-home__blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.85;
+}
+
+.nomos-home__blob--1 {
+  width: 220px;
+  height: 120px;
+  left: 6%;
+  top: 26%;
+  background: #e9f3c4;
+  border-radius: 60% 70% 65% 60%;
+}
+
+.nomos-home__blob--2 {
+  width: 260px;
+  height: 130px;
+  right: 8%;
+  top: 14%;
+  background: #e2f0ee;
+  border-radius: 65% 60% 70% 60%;
+}
+
+.nomos-home__blob--3 {
+  width: 340px;
+  height: 170px;
+  left: 34%;
+  bottom: -8%;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 60%;
+}
+
+.nomos-home__hill {
+  position: absolute;
+  left: 50%;
+  bottom: -6%;
+  width: 52%;
+  height: 78%;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 0 0;
+  background: radial-gradient(80% 100% at 50% 100%, #17241a 0%, #223626 55%, transparent 100%);
+  opacity: 0.92;
+}
+
+.nomos-home__monolith {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: 120px;
+  height: 230px;
+  transform: translateX(-50%) rotate(-3deg);
+  border-radius: 14px;
+  background: linear-gradient(160deg, #1b1b1f 0%, #2c2c33 45%, #101013 100%);
+  box-shadow: 0 30px 60px rgba(10, 25, 12, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.nomos-home__monolith::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, transparent 47%, rgba(255, 255, 255, 0.55) 50%, transparent 53%),
+    linear-gradient(0deg, transparent 68%, rgba(255, 255, 255, 0.25) 70%, transparent 72%);
+  mix-blend-mode: screen;
+}
+
+.nomos-home__ui-card {
+  position: absolute;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 40px rgba(20, 40, 25, 0.18);
+  font-size: 12.5px;
+  animation: nomos-home-float 6s ease-in-out infinite;
+}
+
+@keyframes nomos-home-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.nomos-home__ui-card .row,
+.nomos-home__ui-card .head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.nomos-home__ui-card .head {
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.nomos-home__avatar {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.nomos-home__avatar--green { background: #dff0d0; }
+.nomos-home__avatar--dark {
+  background: #1c1c21;
+  color: #c5e86c;
+  font-size: 11px;
+  font-weight: 600;
+}
+.nomos-home__avatar--sky { background: #dcecf6; }
+
+.nomos-home__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.nomos-home__chip--yellow { background: var(--sun); color: #3a3510; }
+.nomos-home__chip--green { background: #d9efc4; color: #2c4d18; }
+.nomos-home__chip--dark { background: #111114; color: #fff; }
+.nomos-home__chip--outline {
+  background: #fff;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+
+.nomos-home__card-title {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.nomos-home__card-meta {
+  color: var(--grey);
+  font-size: 11px;
+}
+
+.nomos-home__card-body {
+  margin-top: 7px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+
+.nomos-home__card-agent { left: 6%; bottom: 12%; width: 236px; animation-delay: 0.4s; }
+.nomos-home__card-pilot { right: 7%; top: 24%; width: 250px; }
+.nomos-home__card-pilot .row { justify-content: space-between; }
+.nomos-home__card-secure { right: 15%; bottom: 6%; width: 210px; animation-delay: 1.1s; }
+.nomos-home__card-diff {
+  left: 14%;
+  top: 12%;
+  width: 190px;
+  padding: 12px 14px;
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  animation-delay: 0.8s;
+}
+
+.nomos-home__card-diff .add { color: #2c7a2c; }
+.nomos-home__card-diff .del { color: #b04a4a; text-decoration: line-through; opacity: 0.7; }
+.nomos-home__card-diff .kw { color: #6b6b74; }
+
+.nomos-home__strip {
+  padding: 54px 0 20px;
+  text-align: center;
+}
+
+.nomos-home__strip p {
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: var(--grey);
+  font-weight: 500;
+}
+
+.nomos-home__logos {
+  display: flex;
+  justify-content: center;
+  gap: 46px;
+  flex-wrap: wrap;
+  opacity: 0.55;
+}
+
+.nomos-home__logos span {
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.nomos-home__features {
+  padding: 72px 0 30px;
+}
+
+.nomos-home__features h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(30px, 4vw, 44px);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.nomos-home__lead {
+  max-width: 560px;
+  margin: 16px auto 0;
+  color: var(--ink-soft);
+  font-size: 16px;
+  text-align: center;
+}
+
+.nomos-home__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 52px;
+}
+
+.nomos-home__feature-card {
+  padding: 28px 26px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.nomos-home__feature-card:hover {
+  box-shadow: 0 16px 36px rgba(17, 17, 20, 0.07);
+  transform: translateY(-3px);
+}
+
+.nomos-home__feature-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  border-radius: 14px;
+  font-size: 19px;
+}
+
+.nomos-home__feature-icon--lime { background: #eef6cf; }
+.nomos-home__feature-icon--mint { background: #ddf0e0; }
+.nomos-home__feature-icon--sky { background: #e0eef7; }
+
+.nomos-home__feature-card h3 {
+  margin-bottom: 9px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.nomos-home__feature-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.nomos-home__band {
+  margin: 80px 0;
+  padding: 64px 40px;
+  border-radius: var(--radius-card);
+  text-align: center;
+  background:
+    radial-gradient(100% 140% at 12% 0%, #eef6b8 0%, transparent 50%),
+    radial-gradient(90% 120% at 90% 10%, var(--sky) 0%, transparent 50%),
+    linear-gradient(120deg, var(--lime) 0%, var(--mint) 55%, #dff0e2 100%);
+}
+
+.nomos-home__band h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 3.6vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.nomos-home__band p {
+  margin-top: 12px;
+  color: #2e3d2a;
+  font-size: 15px;
+}
+
+.nomos-home footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 0 34px;
+  border-top: 1px solid var(--line);
+  color: var(--grey);
+  font-size: 13px;
+}
+
+.nomos-home__footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.nomos-public-section {
+  padding: 40px 0 80px;
+}
+
+.nomos-public-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.nomos-public-card {
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 20px 50px rgba(17, 17, 20, 0.05);
+}
+
+.nomos-public-card h1 {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.nomos-public-card h2 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.nomos-public-card h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.nomos-public-eyebrow {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #f6f6f7;
+  color: var(--grey);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.nomos-public-body {
+  margin-top: 18px;
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.nomos-public-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.nomos-public-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nomos-public-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 7px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--pill-black);
+}
+
+.nomos-public-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.nomos-public-metric {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fcfcfc;
+}
+
+.nomos-public-metric strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.nomos-public-metric span {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.nomos-public-stack {
+  display: grid;
+  gap: 20px;
+}
+
+.nomos-public-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.nomos-public-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.nomos-public-form input {
+  width: 100%;
+  padding: 15px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nomos-public-form input:focus {
+  border-color: #b8d96b;
+  box-shadow: 0 0 0 4px rgba(197, 232, 108, 0.2);
+}
+
+.nomos-public-note {
+  margin-top: 16px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.nomos-public-banner {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nomos-public-banner--success {
+  background: #edf7d2;
+  color: #305017;
+}
+
+.nomos-public-banner--warn {
+  background: #fff6dc;
+  color: #74580b;
+}
+
+.nomos-public-banner--neutral {
+  background: #f6f6f7;
+  color: var(--ink-soft);
+}
+
+.nomos-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.nomos-pricing-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background: #fff;
+}
+
+.nomos-pricing-card--featured {
+  background:
+    radial-gradient(110% 120% at 0% 0%, #eef6b8 0%, transparent 40%),
+    linear-gradient(180deg, #ffffff 0%, #fbfcf7 100%);
+  box-shadow: 0 22px 50px rgba(141, 168, 74, 0.14);
+}
+
+.nomos-pricing-kicker {
+  color: var(--grey);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.nomos-pricing-price {
+  margin-top: 18px;
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.nomos-pricing-price small {
+  font-size: 18px;
+  color: var(--ink-soft);
+}
+
+.nomos-pricing-copy {
+  margin-top: 14px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.nomos-pricing-features {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nomos-pricing-features li {
+  display: flex;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nomos-pricing-cta {
+  margin-top: 24px;
+}
+
+.nomos-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.nomos-faq-card {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+}
+
+.nomos-faq-card p {
+  margin-top: 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.nomos-home footer a:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nomos-home__ui-card {
+    animation: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .nomos-home__nav-center {
+    display: none;
+  }
+
+  .nomos-home__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nomos-home__card-diff {
+    display: none;
+  }
+
+  .nomos-home__card-pilot {
+    right: 4%;
+    top: 8%;
+  }
+
+  .nomos-home__card-agent {
+    left: 4%;
+    bottom: 8%;
+    width: 210px;
+  }
+
+  .nomos-home__card-secure {
+    right: 6%;
+    bottom: 26%;
+  }
+
+  .nomos-public-hero,
+  .nomos-pricing-grid,
+  .nomos-faq-grid,
+  .nomos-public-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .nomos-home footer {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
