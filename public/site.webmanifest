@@ -1,0 +1,16 @@
+{
+  "name": "Nomos",
+  "short_name": "Nomos",
+  "description": "The AI agentic IDE for teams building software end to end.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

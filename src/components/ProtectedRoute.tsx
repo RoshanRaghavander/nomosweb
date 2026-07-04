@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 
+import AppLoading from '@/components/AppLoading'
 import { useAuthStore } from '@/store/useAuthStore'
 
 interface ProtectedRouteProps {
@@ -12,11 +13,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const status = useAuthStore((state) => state.status)
 
   if (status === 'loading') {
-    return (
-      <div className="mx-auto flex min-h-screen max-w-3xl items-center justify-center px-6 text-sm text-slate-300">
-        Loading your Nomos account…
-      </div>
-    )
+    return <AppLoading label="Loading your Nomos account…" />
   }
 
   if (!session) {

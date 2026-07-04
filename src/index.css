@@ -1,15 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #f8fafc;
-  background: #050816;
+  color: #111114;
+  background: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,7 +24,7 @@
   }
 
   body {
-    @apply m-0 min-h-screen bg-[#050816] text-slate-50;
+    @apply m-0 min-h-screen bg-white text-[#111114];
   }
 
   a {
@@ -42,32 +40,13 @@
 
 @layer utilities {
   .font-display {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
-
-  .text-glow {
-    text-shadow: 0 0 28px rgba(163, 230, 53, 0.18);
-  }
-
-  .surface-grid {
-    background-image: linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
-    background-size: 36px 36px;
-  }
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%);
-  mix-blend-mode: screen;
 }
 
 ::selection {
-  background: rgba(163, 230, 53, 0.4);
-  color: #020617;
+  background: rgba(197, 232, 108, 0.45);
+  color: #111114;
 }
 
 #root {

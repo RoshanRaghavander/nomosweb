@@ -1,57 +1,66 @@
-# React + TypeScript + Vite
+# Nomos web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The `web/` app is the public landing page plus the authenticated dashboard and billing surface for Nomos.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Vite
+- React
+- TypeScript
+- React Router
+- Zustand
+- Supabase Auth + Edge Functions
 
-## Expanding the ESLint configuration
+## Environment
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Create `web/.env.local`:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+VITE_SUPABASE_URL=https://rpnweaekkjoxhgukmazu.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Use the publishable key only. Do not place service role or Stripe secret keys in the web app.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Commands
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+npm run dev
+npm run check
+npm run lint
+npm run test
+npm run build
 ```
+
+## Production checklist
+
+1. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in the host environment.
+2. Apply the Supabase migrations so the web app can read `profiles` and `usage_events`.
+3. Deploy the Supabase functions used by billing:
+   - `create-checkout-session`
+   - `stripe-webhook`
+4. Set the server-side Stripe secrets in Supabase:
+   - `STRIPE_SECRET_KEY`
+   - `STRIPE_WEBHOOK_SECRET`
+   - `STRIPE_PRO_PRICE_ID`
+5. Configure a Stripe webhook endpoint at:
+
+```text
+https://rpnweaekkjoxhgukmazu.supabase.co/functions/v1/stripe-webhook
+```
+
+6. Validate the production build locally with `npm run build`.
+
+## Routing
+
+This is a client-rendered SPA. The host must rewrite unknown routes such as `/dashboard` and `/billing` back to `index.html`.
+
+`vercel.json` is included for Vercel deployments.
+
+## Billing behavior
+
+- The browser starts checkout by invoking `create-checkout-session`.
+- Stripe webhooks are the source of truth for subscription changes.
+- The web app reads the current plan from `profiles`.
+- Usage metrics come from `usage_events`.

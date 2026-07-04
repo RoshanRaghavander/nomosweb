@@ -24,21 +24,36 @@ export function useAuthBootstrap() {
     }
 
     const syncSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession()
 
-      setSession(session)
+        if (error) {
+          throw error
+        }
 
-      if (!session) {
-        setProfile(null)
+        setSession(session)
+
+        if (!session) {
+          setProfile(null)
+          setNotice(null)
+          setStatus('ready')
+          return
+        }
+
+        const profile = await fetchNomosProfile(session)
+        setProfile(profile)
+        setNotice(null)
         setStatus('ready')
-        return
+      } catch (error) {
+        console.error('Failed to bootstrap auth session', error)
+        setSession(null)
+        setProfile(null)
+        setNotice('Nomos could not restore your session. Refresh the page and try again.')
+        setStatus('ready')
       }
-
-      const profile = await fetchNomosProfile(session)
-      setProfile(profile)
-      setStatus('ready')
     }
 
     void syncSession()
@@ -53,15 +68,24 @@ export function useAuthBootstrap() {
 
       if (!session) {
         setCurrentProfile(null)
+        useAuthStore.getState().setNotice(null)
         setCurrentStatus('ready')
         return
       }
 
-      void fetchNomosProfile(session).then((profile) => {
-        const latestStore = useAuthStore.getState()
-        latestStore.setProfile(profile)
-        latestStore.setStatus('ready')
-      })
+      void fetchNomosProfile(session)
+        .then((profile) => {
+          const latestStore = useAuthStore.getState()
+          latestStore.setProfile(profile)
+          latestStore.setNotice(null)
+          latestStore.setStatus('ready')
+        })
+        .catch((error) => {
+          console.error('Failed to refresh auth state', error)
+          const latestStore = useAuthStore.getState()
+          latestStore.setNotice('Nomos could not refresh the latest account state.')
+          latestStore.setStatus('ready')
+        })
     })
 
     return () => {
