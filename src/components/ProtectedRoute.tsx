@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!session) {
-    return <Navigate replace to="/" />
+    return <Navigate replace to="/auth" />
   }
 
   return <>{children}</>

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 
-import AuthPanel from '@/components/AuthPanel'
 import PublicSiteShell from '@/components/PublicSiteShell'
 import { useAuthStore } from '@/store/useAuthStore'
 
@@ -51,9 +50,9 @@ export default function Home() {
               Open dashboard
             </Link>
           ) : (
-            <a className="nomos-home__pill nomos-home__pill--ghost" href="#signin">
+            <Link className="nomos-home__pill nomos-home__pill--ghost" to="/auth">
               Sign in
-            </a>
+            </Link>
           )}
         </div>
 
@@ -109,7 +108,7 @@ export default function Home() {
               <span className="nomos-home__avatar nomos-home__avatar--sky">✓</span>
               <div>
                 <div className="nomos-home__card-title">Supabase auth</div>
-                <div className="nomos-home__card-meta">Passwordless entry</div>
+                <div className="nomos-home__card-meta">Account-backed access</div>
               </div>
             </div>
             <div className="nomos-home__card-body">
@@ -148,26 +147,12 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="nomos-public-section" id="signin">
-        <div className="nomos-public-hero">
-          <article className="nomos-public-card">
-            <span className="nomos-public-eyebrow">Sign in</span>
-            <h2 className="mt-6">Access your Nomos workspace with a magic link.</h2>
-            <p className="nomos-public-body">
-              Use the same account across the AI IDE, dashboard, and billing flow. No separate login page, no password wall,
-              and no context switch away from the homepage.
-            </p>
-          </article>
-          <AuthPanel />
-        </div>
-      </section>
-
       <section className="nomos-home__band">
         <h2>From first prompt to shipped product, keep the same execution context.</h2>
         <p>Use Nomos as the AI IDE and software builder layer for teams that need more than inline completion.</p>
         <div className="nomos-home__cta-row">
-          <Link className="nomos-home__pill" to={session ? '/dashboard' : '/pricing'}>
-            {session ? 'Continue to dashboard' : 'View pricing'}
+          <Link className="nomos-home__pill" to={session ? '/dashboard' : '/auth'}>
+            {session ? 'Continue to dashboard' : 'Create account'}
           </Link>
           <Link className="nomos-home__pill nomos-home__pill--ghost" to="/pricing">
             Compare plans

@@ -41,8 +41,8 @@ export default function PublicSiteShell({ children }: PublicSiteShellProps) {
                 Billing
               </Link>
             ) : (
-              <Link className="plain" to="/pricing">
-                Pricing
+              <Link className="plain" to="/auth">
+                Sign in
               </Link>
             )}
 
@@ -60,6 +60,9 @@ export default function PublicSiteShell({ children }: PublicSiteShellProps) {
           <div className="nomos-home__footer-links">
             <Link to="/pricing">Pricing</Link>
             <Link to={session ? '/dashboard' : '/'}>{session ? 'Dashboard' : 'Homepage'}</Link>
+            <Link to="/terms">Terms</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/cookies">Cookies</Link>
           </div>
         </footer>
       </div>

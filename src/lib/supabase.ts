@@ -75,17 +75,63 @@ export function getAppOrigin() {
   return normalizeOrigin(window.location.origin)
 }
 
-export async function sendMagicLink(email: string, redirectPath = '/auth/callback') {
+export function getDesktopReturnTarget(value: string | null) {
+  if (!value) {
+    return null
+  }
+
+  try {
+    const url = new URL(value)
+    if (url.protocol !== 'nomos:') {
+      return null
+    }
+
+    return url
+  } catch {
+    return null
+  }
+}
+
+export function buildDesktopAuthReturnUrl(session: Session, returnTo: string) {
+  const target = getDesktopReturnTarget(returnTo)
+  if (!target) {
+    return null
+  }
+
+  target.searchParams.set('access_token', session.access_token)
+  target.searchParams.set('refresh_token', session.refresh_token)
+  target.searchParams.set('expires_in', String(session.expires_in ?? 3600))
+  target.searchParams.set('user_id', session.user.id)
+
+  if (session.user.email) {
+    target.searchParams.set('email', session.user.email)
+  }
+
+  return target.toString()
+}
+
+export async function createAccountWithPassword(email: string, password: string, redirectPath = '/auth/callback') {
   if (!supabase) {
     throw new Error('Supabase environment variables are missing.')
   }
 
-  return supabase.auth.signInWithOtp({
+  return supabase.auth.signUp({
     email,
+    password,
     options: {
-      shouldCreateUser: true,
       emailRedirectTo: `${getAppOrigin()}${redirectPath}`,
     },
+  })
+}
+
+export async function signInWithPassword(email: string, password: string) {
+  if (!supabase) {
+    throw new Error('Supabase environment variables are missing.')
+  }
+
+  return supabase.auth.signInWithPassword({
+    email,
+    password,
   })
 }
 
