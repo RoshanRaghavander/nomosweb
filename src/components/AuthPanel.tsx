@@ -88,8 +88,8 @@ export default function AuthPanel() {
 
       <p className="nomos-public-body">
         {isDesktopAuth
-          ? 'Use your Nomos account here for the desktop app. After authentication or email confirmation, this page can hand the session back to Nomos automatically.'
-          : 'Use a standard Nomos account with email and password. The same session unlocks the dashboard and billing routes.'}
+          ? 'Sign in with your Nomos account to continue in the desktop app. After authentication, your session can return directly to the IDE.'
+          : 'Use your Nomos account with email and password to access your workspace, dashboard, and billing in one place.'}
       </p>
 
       {session ? (

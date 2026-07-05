@@ -1,3 +1,5 @@
+import { copyFileSync, existsSync } from 'node:fs'
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -26,5 +28,16 @@ export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths(),
+    {
+      name: 'copy-hostinger-rewrite',
+      closeBundle() {
+        const source = path.resolve(__dirname, 'public/.htaccess')
+        const target = path.resolve(__dirname, 'dist/.htaccess')
+
+        if (existsSync(source)) {
+          copyFileSync(source, target)
+        }
+      },
+    },
   ],
 })

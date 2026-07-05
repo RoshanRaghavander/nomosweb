@@ -6,8 +6,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 
 const authBenefits = [
   'Use one account across the Nomos IDE, dashboard, and billing center.',
-  'Create a standard email and password account without a separate signup flow on the homepage.',
-  'Desktop sign-in can still return straight to the IDE after browser authentication completes.',
+  'Access your workspace with standard email and password authentication.',
+  'When sign-in starts from the desktop app, authentication can return directly to the IDE.',
 ]
 
 export default function Auth() {
@@ -24,10 +24,10 @@ export default function Auth() {
         <div className="nomos-public-hero">
           <article className="nomos-public-card">
             <span className="nomos-public-eyebrow">Account</span>
-            <h1>Sign in to Nomos from one dedicated page.</h1>
+            <h1>Access your Nomos workspace with one account.</h1>
             <p className="nomos-public-body">
-              Create your account or sign in with standard credentials. This page is the public entry point for web access
-              and the browser-based IDE authentication flow.
+              Create your account or sign in to manage workspace access, billing, and product activity through a single
+              Nomos identity.
             </p>
 
             <div className="nomos-public-list">

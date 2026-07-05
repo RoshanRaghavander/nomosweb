@@ -46,10 +46,22 @@ export default function PublicSiteShell({ children }: PublicSiteShellProps) {
               </Link>
             )}
 
-            <Link className="nomos-home__pill" to={session ? '/dashboard' : '/pricing'}>
-              {session ? 'Go to dashboard' : 'View pricing'}
-              <ArrowRight size={16} />
-            </Link>
+            {session ? (
+              <Link className="nomos-home__pill" to="/dashboard">
+                Go to dashboard
+                <ArrowRight size={16} />
+              </Link>
+            ) : (
+              <a
+                className="nomos-home__pill"
+                href="https://github.com/2505-Labs/Nomos/releases"
+                rel="noreferrer"
+                target="_blank"
+              >
+                Download
+                <ArrowRight size={16} />
+              </a>
+            )}
           </div>
         </nav>
 
