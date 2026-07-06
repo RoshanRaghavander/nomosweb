@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import AppLoading from '@/components/AppLoading'
-import { buildDesktopAuthReturnUrl } from '@/lib/supabase'
+import { completeDesktopHandoff } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
 
 function getAuthError(location: ReturnType<typeof useLocation>) {
@@ -27,8 +27,12 @@ export default function AuthCallback() {
   const authError = useMemo(() => getAuthError(location), [location])
   const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search])
   const isDesktopAuth = searchParams.get('desktop') === '1'
-  const returnTo = searchParams.get('returnTo')
-  const desktopReturnUrl = session && returnTo ? buildDesktopAuthReturnUrl(session, returnTo) : null
+  const returnTo = searchParams.get('returnTo') ?? searchParams.get('return_to')
+
+  // Desktop handoff runs once the session is ready: store the session
+  // server-side under the app's opaque code, then open the token-less deep link.
+  const [deepLink, setDeepLink] = useState<string | null>(null)
+  const [handoffError, setHandoffError] = useState<string | null>(null)
 
   useEffect(() => {
     if (authError) {
@@ -37,16 +41,26 @@ export default function AuthCallback() {
       return
     }
 
-    if (status === 'ready' && session && isDesktopAuth && desktopReturnUrl) {
-      window.location.replace(desktopReturnUrl)
-      return
+    if (status !== 'ready' || !session) return
+
+    if (isDesktopAuth && returnTo) {
+      let cancelled = false
+      void completeDesktopHandoff(session, returnTo).then((result) => {
+        if (cancelled) return
+        if (result.deepLink) {
+          setDeepLink(result.deepLink)
+        } else {
+          setHandoffError(result.error)
+        }
+      })
+      return () => {
+        cancelled = true
+      }
     }
 
-    if (status === 'ready' && session) {
-      setNotice('Your account is confirmed and ready.')
-      navigate('/dashboard', { replace: true })
-    }
-  }, [authError, desktopReturnUrl, isDesktopAuth, navigate, session, setNotice, status])
+    setNotice('Your account is confirmed and ready.')
+    navigate('/dashboard', { replace: true })
+  }, [authError, isDesktopAuth, navigate, returnTo, session, setNotice, status])
 
   if (status === 'missing-env') {
     return <Navigate replace to="/" />
@@ -69,15 +83,19 @@ export default function AuthCallback() {
           <p className="text-xs uppercase tracking-[0.24em] text-[#8a8a92]">Desktop authentication</p>
           <h1 className="mt-4 font-display text-3xl">Returning to Nomos…</h1>
           <p className="mt-4 text-sm leading-7 text-[#3c3c43]">
-            Your browser is handing the authenticated session back to the desktop app.
+            {handoffError
+              ? handoffError
+              : 'Your browser is handing the authenticated session back to the desktop app.'}
           </p>
-          {desktopReturnUrl ? (
+          {deepLink ? (
             <a
               className="mt-6 inline-flex items-center rounded-full bg-[#111114] px-5 py-3 text-sm font-medium text-white"
-              href={desktopReturnUrl}
+              href={deepLink}
             >
               Open Nomos
             </a>
+          ) : !handoffError ? (
+            <p className="mt-6 text-sm text-[#8a8a92]">Preparing your session…</p>
           ) : null}
         </div>
       </div>

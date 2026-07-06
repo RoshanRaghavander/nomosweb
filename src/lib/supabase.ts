@@ -1,6 +1,7 @@
 import { createClient, type Session } from '@supabase/supabase-js'
 
-export type NomosPlan = 'free' | 'pro'
+export type NomosPlan = 'free' | 'plus' | 'pro' | 'pro_max'
+export type NomosPaidPlan = Exclude<NomosPlan, 'free'>
 
 export interface NomosProfile {
   id: string
@@ -92,22 +93,53 @@ export function getDesktopReturnTarget(value: string | null) {
   }
 }
 
-export function buildDesktopAuthReturnUrl(session: Session, returnTo: string) {
+export function extractHandoffId(returnTo: string | null): string | null {
   const target = getDesktopReturnTarget(returnTo)
-  if (!target) {
-    return null
+  return target?.searchParams.get('handoff') ?? null
+}
+
+// Cursor/Windsurf-style handoff: instead of putting tokens in the nomos:// URL,
+// store the session server-side under the desktop's opaque handoff code, then
+// hand the desktop only that code (already inside returnTo). The desktop
+// exchanges the code for the session over HTTPS via auth-claim.
+// Returns { deepLink } on success or { error } on failure (plain nullable
+// fields rather than a discriminated union, since this project builds with
+// strict:false where boolean-discriminant narrowing is unreliable).
+export async function completeDesktopHandoff(
+  session: Session,
+  returnTo: string,
+): Promise<{ deepLink: string | null; error: string | null }> {
+  const target = getDesktopReturnTarget(returnTo)
+  const handoffId = target?.searchParams.get('handoff')
+  if (!target || !handoffId) {
+    return { deepLink: null, error: 'This sign-in link is missing its desktop handoff code. Restart sign-in from the app.' }
+  }
+  if (!supabaseUrl || !supabasePublishableKey) {
+    return { deepLink: null, error: 'Server is not configured for desktop sign-in.' }
   }
 
-  target.searchParams.set('access_token', session.access_token)
-  target.searchParams.set('refresh_token', session.refresh_token)
-  target.searchParams.set('expires_in', String(session.expires_in ?? 3600))
-  target.searchParams.set('user_id', session.user.id)
-
-  if (session.user.email) {
-    target.searchParams.set('email', session.user.email)
+  try {
+    const res = await fetch(`${supabaseUrl}/functions/v1/auth-handoff`, {
+      method: 'POST',
+      headers: {
+        apikey: supabasePublishableKey,
+        Authorization: `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        handoffId,
+        refreshToken: session.refresh_token,
+        expiresIn: session.expires_in ?? 3600,
+      }),
+    })
+    if (!res.ok) {
+      return { deepLink: null, error: 'Could not hand the session back to the desktop app. Try signing in again.' }
+    }
+    // returnTo already carries the handoff code and no tokens -- it IS the deep link.
+    return { deepLink: target.toString(), error: null }
+  } catch {
+    return { deepLink: null, error: 'Could not reach Nomos servers to complete desktop sign-in.' }
   }
-
-  return target.toString()
 }
 
 export async function createAccountWithPassword(email: string, password: string, redirectPath = '/auth/callback') {

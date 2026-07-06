@@ -6,6 +6,7 @@ import '@/styles/homepage.css'
 
 import { signOutUser } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
+import { formatPlanLabel } from '@/utils/format'
 
 interface AppFrameProps {
   children: ReactNode
@@ -95,7 +96,7 @@ export default function AppFrame({ children }: AppFrameProps) {
         <footer className="mt-10 flex flex-col gap-3 border-t border-[#e7e7ea] pt-6 text-sm text-[#8a8a92] md:flex-row md:items-center md:justify-between">
           <p>Nomos web for the AI agentic IDE, billing, and dashboard flows.</p>
           <div className="flex flex-wrap items-center gap-4" style={{ color: '#3c3c43' }}>
-            <span>{profile?.plan === 'pro' ? 'Pro account linked' : 'Free plan starter state'}</span>
+            <span>{profile ? `${formatPlanLabel(profile.plan)} plan linked` : 'Signed out'}</span>
             <Link className="hover:text-[#111114]" to="/terms">
               Terms
             </Link>

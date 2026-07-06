@@ -1,8 +1,7 @@
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import AuthPanel from '@/components/AuthPanel'
 import PublicSiteShell from '@/components/PublicSiteShell'
-import { getDesktopReturnTarget } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
 
 const authBenefits = [
@@ -12,16 +11,8 @@ const authBenefits = [
 ]
 
 export default function Auth() {
-  const location = useLocation()
   const session = useAuthStore((state) => state.session)
   const status = useAuthStore((state) => state.status)
-  const searchParams = new URLSearchParams(location.search)
-  const desktopReturnTo = searchParams.get('returnTo')
-  const isDesktopAuth = searchParams.get('desktop') === '1' && Boolean(getDesktopReturnTarget(desktopReturnTo))
-
-  if (status === 'ready' && session && isDesktopAuth && desktopReturnTo) {
-    return <Navigate replace to={`/auth/callback?desktop=1&returnTo=${encodeURIComponent(desktopReturnTo)}`} />
-  }
 
   if (status === 'ready' && session) {
     return <Navigate replace to="/dashboard" />

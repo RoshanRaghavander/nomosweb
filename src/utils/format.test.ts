@@ -5,7 +5,9 @@ import { formatCapability, formatDate, formatPlanLabel, formatRelativeTime } fro
 describe('format helpers', () => {
   it('formats plan labels', () => {
     expect(formatPlanLabel('free')).toBe('Free')
+    expect(formatPlanLabel('plus')).toBe('Plus')
     expect(formatPlanLabel('pro')).toBe('Pro')
+    expect(formatPlanLabel('pro_max')).toBe('Pro max')
   })
 
   it('formats capability names', () => {

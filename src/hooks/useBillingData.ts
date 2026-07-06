@@ -1,25 +1,48 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { getCheckoutRedirects, supabase } from '@/lib/supabase'
+import { getCheckoutRedirects, type NomosPaidPlan, type NomosPlan, supabase } from '@/lib/supabase'
+import { formatPlanLabel } from '@/utils/format'
 import { useAuthStore } from '@/store/useAuthStore'
 
 interface BillingData {
-  currentPlan: 'free' | 'pro'
+  currentPlan: NomosPlan
   statusLabel: string
   usageThisMonth: number
+  starterRequestsUsed: number | null
+  starterRequestsMax: number | null
+  premiumAgentRunsThisMonth: number | null
+  premiumAgentQuota: number | null
   paymentSummary: string
   invoiceSummary: string
   nextStep: string
 }
 
-function buildFallbackData(plan: 'free' | 'pro' = 'free'): BillingData {
+const PREMIUM_AGENT_QUOTAS: Partial<Record<NomosPlan, number>> = {
+  pro: 120,
+  pro_max: 400,
+}
+
+function buildFallbackData(plan: NomosPlan = 'free'): BillingData {
+  const premiumAgentQuota = PREMIUM_AGENT_QUOTAS[plan] ?? null
+
   return {
     currentPlan: plan,
-    statusLabel: plan === 'pro' ? 'Active' : 'Starter',
+    statusLabel: plan === 'free' ? 'Starter' : 'Active',
     usageThisMonth: 0,
-    paymentSummary: plan === 'pro' ? 'Stored in Stripe' : 'No payment method stored yet',
-    invoiceSummary: 'Invoices will populate after Stripe web billing is deployed.',
-    nextStep: plan === 'pro' ? 'Review billing events in Supabase and Stripe.' : 'Upgrade after the checkout edge function is deployed.',
+    starterRequestsUsed: plan === 'free' ? 0 : null,
+    starterRequestsMax: plan === 'free' ? 20 : null,
+    premiumAgentRunsThisMonth: premiumAgentQuota ? 0 : null,
+    premiumAgentQuota,
+    paymentSummary: plan === 'free' ? 'No billing record is linked yet.' : 'Billing is linked to your paid Nomos subscription.',
+    invoiceSummary: plan === 'free' ? 'Invoices appear after your first upgrade.' : 'Invoice history populates from your active subscription.',
+    nextStep:
+      plan === 'free'
+        ? 'Use the first 20 starter requests, then upgrade to continue.'
+        : plan === 'plus'
+          ? 'Plus runs on the fast DeepSeek route with no Nomos-side request throttles.'
+          : premiumAgentQuota
+            ? `${premiumAgentQuota} premium agent runs are available each month before routing falls back automatically.`
+            : 'Plan data is active.',
   }
 }
 
@@ -46,13 +69,26 @@ export function useBillingData() {
       monthStart.setUTCDate(1)
       monthStart.setUTCHours(0, 0, 0, 0)
 
-      const usageResult = await supabase
-        .from('usage_events')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', session.user.id)
-        .gte('created_at', monthStart.toISOString())
+      const [usageResult, starterResult, premiumAgentResult] = await Promise.all([
+        supabase
+          .from('usage_events')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id)
+          .gte('created_at', monthStart.toISOString()),
+        supabase
+          .from('usage_events')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id)
+          .eq('billable_request', true),
+        supabase
+          .from('usage_events')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id)
+          .eq('is_premium_agent', true)
+          .gte('created_at', monthStart.toISOString()),
+      ])
 
-      if (usageResult.error) {
+      if (usageResult.error || starterResult.error || premiumAgentResult.error) {
         setError('Billing metrics are waiting on the Supabase read migration.')
         setData(buildFallbackData(profile?.plan ?? 'free'))
         setLoading(false)
@@ -60,19 +96,31 @@ export function useBillingData() {
       }
 
       const currentPlan = profile?.plan ?? 'free'
+      const premiumAgentQuota = PREMIUM_AGENT_QUOTAS[currentPlan] ?? null
+      const starterRequestsUsed = currentPlan === 'free' ? (starterResult.count ?? 0) : null
+      const starterRequestsMax = currentPlan === 'free' ? 20 : null
+      const premiumAgentRunsThisMonth = premiumAgentQuota ? (premiumAgentResult.count ?? 0) : null
 
       setData({
         currentPlan,
-        statusLabel: currentPlan === 'pro' ? 'Active' : 'Starter',
+        statusLabel: currentPlan === 'free' ? 'Starter' : 'Active',
         usageThisMonth: usageResult.count ?? 0,
-        paymentSummary: profile?.stripeCustomerId ? 'Stored in Stripe and linked to this account.' : 'No Stripe customer is linked yet.',
+        starterRequestsUsed,
+        starterRequestsMax,
+        premiumAgentRunsThisMonth,
+        premiumAgentQuota,
+        paymentSummary: profile?.stripeCustomerId ? 'Billing is linked to this account.' : currentPlan === 'free' ? 'No billing record is linked yet.' : 'No billing customer is linked yet.',
         invoiceSummary: profile?.stripeSubscriptionId
-          ? 'Stripe subscription detected. Surface invoice history after webhook expansion.'
+          ? `${formatPlanLabel(currentPlan)} subscription detected and syncing through the billing webhook.`
           : 'Invoices will appear after the first successful checkout.',
         nextStep:
-          currentPlan === 'pro'
-            ? 'Keep webhook events deployed so plan changes stay synchronized.'
-            : 'Use checkout to upgrade, then Stripe webhooks can promote the account to Pro.',
+          currentPlan === 'free'
+            ? `Starter usage: ${starterRequestsUsed ?? 0}/${starterRequestsMax ?? 20} requests before the IDE paywall appears.`
+            : currentPlan === 'plus'
+              ? 'Plus stays on the fast DeepSeek path for autocomplete, chat, and agent execution.'
+              : premiumAgentQuota
+                ? `Premium agent runs this month: ${premiumAgentRunsThisMonth ?? 0}/${premiumAgentQuota}. After the quota, routing falls back automatically.`
+                : 'Billing is active.',
       })
 
       setLoading(false)
@@ -81,13 +129,10 @@ export function useBillingData() {
     void load()
   }, [profile?.plan, profile?.stripeCustomerId, profile?.stripeSubscriptionId, session])
 
-  const checkoutEnabled = useMemo(
-    () => Boolean(session && supabase && profile?.plan !== 'pro'),
-    [profile?.plan, session],
-  )
+  const checkoutEnabled = useMemo(() => Boolean(session && supabase), [session])
 
-  const startCheckout = async () => {
-    if (!supabase || !session || profile?.plan === 'pro') {
+  const startCheckout = async (plan: NomosPaidPlan) => {
+    if (!supabase || !session) {
       return
     }
 
@@ -95,7 +140,10 @@ export function useBillingData() {
     setError(null)
 
     const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout-session', {
-      body: getCheckoutRedirects(),
+      body: {
+        ...getCheckoutRedirects(),
+        plan,
+      },
     })
 
     setCheckoutPending(false)

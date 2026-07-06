@@ -3,12 +3,13 @@ import { ArrowRight, KeyRound } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 import {
-  buildDesktopAuthReturnUrl,
+  completeDesktopHandoff,
   createAccountWithPassword,
   getDesktopReturnTarget,
   signInWithPassword,
 } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
+import { formatPlanLabel } from '@/utils/format'
 
 export default function AuthPanel() {
   const location = useLocation()
@@ -22,16 +23,33 @@ export default function AuthPanel() {
   const [email, setEmail] = useState(session?.user.email ?? '')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [desktopReturnUrl, setDesktopReturnUrl] = useState<string | null>(null)
   const searchParams = new URLSearchParams(location.search)
-  const desktopReturnTo = searchParams.get('returnTo')
+  const desktopReturnTo = searchParams.get('returnTo') ?? searchParams.get('return_to')
   const isDesktopAuth = searchParams.get('desktop') === '1' && Boolean(getDesktopReturnTarget(desktopReturnTo))
-  const desktopReturnUrl = session && desktopReturnTo ? buildDesktopAuthReturnUrl(session, desktopReturnTo) : null
 
   useEffect(() => {
     if (session?.user.email) {
       setEmail(session.user.email)
     }
   }, [session?.user.email])
+
+  // When a user signs in directly on this page during desktop auth, store the
+  // session server-side under the handoff code and surface the token-less deep
+  // link (matches the AuthCallback path).
+  useEffect(() => {
+    if (!session || !isDesktopAuth || !desktopReturnTo) {
+      setDesktopReturnUrl(null)
+      return
+    }
+    let cancelled = false
+    void completeDesktopHandoff(session, desktopReturnTo).then((result) => {
+      if (!cancelled) setDesktopReturnUrl(result.deepLink)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [session, isDesktopAuth, desktopReturnTo])
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -96,7 +114,7 @@ export default function AuthPanel() {
         <div className="nomos-public-banner nomos-public-banner--neutral">
           <p className="font-medium text-[#111114]">{session.user.email}</p>
           <p className="mt-2">
-            Plan: <span className="text-[#111114]">{profile?.plan === 'pro' ? 'Pro' : 'Free'}</span>
+            Plan: <span className="text-[#111114]">{formatPlanLabel(profile?.plan ?? 'free')}</span>
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
             {desktopReturnUrl ? (

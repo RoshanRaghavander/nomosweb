@@ -1,7 +1,10 @@
 import { type NomosPlan } from '@/lib/supabase'
 
 export function formatPlanLabel(plan: NomosPlan) {
-  return plan === 'pro' ? 'Pro' : 'Free'
+  if (plan === 'plus') return 'Plus'
+  if (plan === 'pro') return 'Pro'
+  if (plan === 'pro_max') return 'Pro max'
+  return 'Free'
 }
 
 export function formatRelativeTime(value: string) {
