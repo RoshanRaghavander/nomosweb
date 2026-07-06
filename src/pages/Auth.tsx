@@ -1,7 +1,8 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import AuthPanel from '@/components/AuthPanel'
 import PublicSiteShell from '@/components/PublicSiteShell'
+import { buildDesktopAuthCallbackPath, getDesktopAuthSearchParams } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
 
 const authBenefits = [
@@ -11,10 +12,18 @@ const authBenefits = [
 ]
 
 export default function Auth() {
+  const location = useLocation()
   const session = useAuthStore((state) => state.session)
   const status = useAuthStore((state) => state.status)
+  const { returnTo, isDesktopAuth } = getDesktopAuthSearchParams(location.search)
 
   if (status === 'ready' && session) {
+    // Existing web sessions must still complete the desktop handoff instead of
+    // jumping straight to the dashboard when the IDE opened this page.
+    if (isDesktopAuth && returnTo) {
+      return <Navigate replace to={buildDesktopAuthCallbackPath(returnTo)} />
+    }
+
     return <Navigate replace to="/dashboard" />
   }
 

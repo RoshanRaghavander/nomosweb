@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import AppLoading from '@/components/AppLoading'
-import { completeDesktopHandoff } from '@/lib/supabase'
+import { completeDesktopHandoff, getDesktopAuthSearchParams } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
 
 function getAuthError(location: ReturnType<typeof useLocation>) {
@@ -25,9 +25,10 @@ export default function AuthCallback() {
   const setNotice = useAuthStore((state) => state.setNotice)
 
   const authError = useMemo(() => getAuthError(location), [location])
-  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const isDesktopAuth = searchParams.get('desktop') === '1'
-  const returnTo = searchParams.get('returnTo') ?? searchParams.get('return_to')
+  const { returnTo, isDesktopAuth } = useMemo(
+    () => getDesktopAuthSearchParams(location.search),
+    [location.search],
+  )
 
   // Desktop handoff runs once the session is ready: store the session
   // server-side under the app's opaque code, then open the token-less deep link.

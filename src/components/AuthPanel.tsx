@@ -3,9 +3,10 @@ import { ArrowRight, KeyRound } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 import {
+  buildDesktopAuthCallbackPath,
   completeDesktopHandoff,
   createAccountWithPassword,
-  getDesktopReturnTarget,
+  getDesktopAuthSearchParams,
   signInWithPassword,
 } from '@/lib/supabase'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -24,9 +25,7 @@ export default function AuthPanel() {
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [desktopReturnUrl, setDesktopReturnUrl] = useState<string | null>(null)
-  const searchParams = new URLSearchParams(location.search)
-  const desktopReturnTo = searchParams.get('returnTo') ?? searchParams.get('return_to')
-  const isDesktopAuth = searchParams.get('desktop') === '1' && Boolean(getDesktopReturnTarget(desktopReturnTo))
+  const { returnTo: desktopReturnTo, isDesktopAuth } = getDesktopAuthSearchParams(location.search)
 
   useEffect(() => {
     if (session?.user.email) {
@@ -66,7 +65,7 @@ export default function AuthPanel() {
 
     setSubmitting(true)
     const redirectPath = isDesktopAuth && desktopReturnTo
-      ? `/auth/callback?desktop=1&returnTo=${encodeURIComponent(desktopReturnTo)}`
+      ? buildDesktopAuthCallbackPath(desktopReturnTo)
       : '/auth/callback'
     const result = mode === 'signup'
       ? await createAccountWithPassword(email, password, redirectPath)

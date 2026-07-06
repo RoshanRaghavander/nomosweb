@@ -98,6 +98,17 @@ export function extractHandoffId(returnTo: string | null): string | null {
   return target?.searchParams.get('handoff') ?? null
 }
 
+export function getDesktopAuthSearchParams(search: string) {
+  const searchParams = new URLSearchParams(search)
+  const returnTo = searchParams.get('returnTo') ?? searchParams.get('return_to')
+  const isDesktopAuth = searchParams.get('desktop') === '1' && Boolean(getDesktopReturnTarget(returnTo))
+  return { returnTo, isDesktopAuth }
+}
+
+export function buildDesktopAuthCallbackPath(returnTo: string) {
+  return `/auth/callback?desktop=1&returnTo=${encodeURIComponent(returnTo)}`
+}
+
 // Cursor/Windsurf-style handoff: instead of putting tokens in the nomos:// URL,
 // store the session server-side under the desktop's opaque handoff code, then
 // hand the desktop only that code (already inside returnTo). The desktop
